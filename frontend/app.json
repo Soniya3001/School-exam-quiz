@@ -35,7 +35,7 @@
       "lang": "en-IN",
       "scope": "/",
       "startUrl": "/"
-        },
+    },
     "plugins": [
       "expo-router",
       [
