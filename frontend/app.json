@@ -31,10 +31,10 @@
       "themeColor": "#1B4332",
       "backgroundColor": "#FDFCF8",
       "display": "standalone",
-      "orientation": "portrait"
-      "lang":"en-IN",
-      "scope":"/",
-      "startUrl":"/"
+      "orientation": "portrait",
+      "lang": "en-IN",
+      "scope": "/",
+      "startUrl": "/"
         },
     "plugins": [
       "expo-router",
