@@ -1,0 +1,23 @@
+{
+  "buildCommand": "cd frontend && yarn install && npx expo export --platform web --output-dir dist && cp public/manifest.json dist/manifest.json && cp public/sw.js dist/sw.js && mkdir -p dist/assets/images && cp -r assets/images/* dist/assets/images/ 2>/dev/null || true",
+  "outputDirectory": "frontend/dist",
+  "framework": null,
+  "headers": [
+    {
+      "source": "/manifest.json",
+      "headers": [
+        { "key": "Content-Type", "value": "application/manifest+json" }
+      ]
+    },
+    {
+      "source": "/sw.js",
+      "headers": [
+        { "key": "Service-Worker-Allowed", "value": "/" },
+        { "key": "Content-Type", "value": "application/javascript" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
