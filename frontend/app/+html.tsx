@@ -12,11 +12,14 @@ export default function Root({ children }: PropsWithChildren) {
           name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
-        {/*
-          Disable body scrolling on web to make ScrollView components work correctly.
-          If you want to enable scrolling, remove `ScrollViewStyleReset` and
-          set `overflow: auto` on the body style below.
-        */}
+        {/* PWA */}
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#1B4332" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="ExamPlatform" />
+        <link rel="apple-touch-icon" href="/assets/images/icon.png" />
         <ScrollViewStyleReset />
         <style
           dangerouslySetInnerHTML={{
