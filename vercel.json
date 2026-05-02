@@ -2,7 +2,21 @@
   "buildCommand": "cd frontend && yarn install && npx expo export --platform web --output-dir dist && cp public/manifest.json dist/manifest.json && cp public/sw.js dist/sw.js",
   "outputDirectory": "frontend/dist",
   "framework": null,
+  "headers": [
+    {
+      "source": "/manifest.json",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json"
+        }
+      ]
+    }
+  ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
