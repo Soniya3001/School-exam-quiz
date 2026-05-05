@@ -146,10 +146,26 @@ async def generate_questions_llm(
     api_key = os.environ.get('GEMINI_API_KEY', '')
 
     diff_map = {
-        1: "EASY (basic recall, definitions, simple facts directly from the lesson)",
-        2: "MEDIUM (understanding and explanation, requires comprehension of concepts)",
-        3: "HARD (application and analysis, requires reasoning, comparisons, or inference)",
+    1: {
+        "tag": "EASY",
+        "type": "Recall & Definition",
+        "description": "Basic recall of facts, terms, and core definitions found directly in the lesson.",
+        "constraint": "No inference required; answer exists as a direct statement in the text."
+    },
+    2: {
+        "tag": "MEDIUM",
+        "type": "Application & Formula",
+        "description": "Questions requiring the application of a specific rule, formula, or grammar law.",
+        "constraint": "Requires identifying which rule from the lesson applies to a given scenario."
+    },
+    3: {
+        "tag": "HARD",
+        "type": "Solving & Analysis",
+        "description": "Multi-step problems requiring pen-and-paper solving or deep logical reasoning.",
+        "constraint": "Answers derived by connecting multiple points from the lesson; requires deduction."
     }
+}
+
     diff_desc = diff_map.get(int(difficulty), diff_map[2])
 
     if str(language).lower() == "hindi":
