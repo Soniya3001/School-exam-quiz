@@ -228,7 +228,7 @@ async def generate_questions_llm(
             if image_b64:
                 groq_prompt = prompt.replace(
                     "\n\nThe lesson is in the attached image. Read it carefully (including any printed text in English/Hindi) and base your questions on its content.",
-                    f"\n\nNote: An image was provided but could not be processed. Please generate {count} general questions from the topic given in images."
+                    f"\n\nNote: An image was provided but could not be processed.Please show the massage image could not be processed."
                 )
             text = await call_groq(groq_prompt, system_msg)
             logger.info("Questions generated via Groq fallback")
