@@ -149,15 +149,15 @@ async def generate_questions_llm(
 
     diff_map = {
         1: {
-            "tag": "KNOWLEDGE",
+            "tag": "EASY",
             "desc": "Direct facts and definitions from NCERT textbooks."
         },
         2: {
-            "tag": "UNDERSTANDING",
+            "tag": "MEDIUM",
             "desc": "Conceptual clarity and application of rules/formulas."
         },
         3: {
-            "tag": "HOTS",
+            "tag": "HARD",
             "desc": "Higher Order Thinking Skills; multi-step logic and analysis."
         }
     }
