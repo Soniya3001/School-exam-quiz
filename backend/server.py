@@ -141,63 +141,51 @@ async def call_groq(prompt: str, system_msg: str) -> str:
 
 async def generate_questions_llm(
     lesson_text: Optional[str], image_b64: Optional[str], count: int,
+    test_class: str, subject: str,  # Added these two
     language: str = "English", difficulty: int = 2,
 ) -> List[dict]:
+
     api_key = os.environ.get('GEMINI_API_KEY', '')
 
     diff_map = {
-    1: {
-        "tag": "EASY",
-        "type": "Recall & Definition",
-        "description": "Basic recall of facts, terms, and core definitions found directly in the lesson.",
-        "constraint": "No inference required; answer exists as a direct statement in the text."
-    },
-    2: {
-        "tag": "MEDIUM",
-        "type": "Application & Formula",
-        "description": "Questions requiring the application of a specific rule, formula, or grammar law.",
-        "constraint": "Requires identifying which rule from the lesson applies to a given scenario."
-    },
-    3: {
-        "tag": "HARD",
-        "type": "Solving & Analysis",
-        "description": "Multi-step problems requiring pen-and-paper solving or deep logical reasoning.",
-        "constraint": "Answers derived by connecting multiple points from the lesson; requires deduction."
+        # New CBSE-aligned difficulty mapping
+    diff_map = {
+        1: {
+            "tag": "KNOWLEDGE",
+            "desc": "Direct facts and definitions from NCERT textbooks."
+        },
+        2: {
+            "tag": "UNDERSTANDING",
+            "desc": "Conceptual clarity and application of rules/formulas."
+        },
+        3: {
+            "tag": "HOTS",
+            "desc": "Higher Order Thinking Skills; multi-step logic and analysis."
+        }
     }
-}
 
-    diff_desc = diff_map.get(int(difficulty), diff_map[2])
+    diff_info = diff_map.get(int(difficulty), diff_map[2])
 
-    if str(language).lower() == "hindi":
-        lang_instruction = (
-            "Write the question text and ALL four options entirely in HINDI (Devanagari script). "
-            "Use clear, school-textbook-style Hindi suitable for Indian government school students. "
-            "Do NOT mix English. Proper nouns may stay in English in parentheses if needed."
-        )
-    else:
-        lang_instruction = "Write the question text and all four options in clear, simple ENGLISH suitable for Indian school students."
-
+    # Enhanced System Message for Academic Context
     system_msg = (
-        "You are an expert Indian school teacher who creates clear, fair multiple-choice "
-        "questions strictly from the provided lesson content. Always return ONLY valid JSON, "
-        "with no markdown, no commentary, no code fences."
+        f"You are a Senior CBSE Paper Setter for {subject}, Class {test_class}. "
+        "Create high-quality academic MCQs strictly following the NCERT curriculum. "
+        "Avoid meta-questions about the document; focus only on the subject matter."
     )
 
+    # Specific instructions to prevent "What is this lesson about" questions
     prompt = (
-        f"Generate exactly {count} multiple choice questions based on the lesson content These questions should be about study topics in lesson and should useful for students for exam purpose.\n"
-        f"Difficulty level: {diff_desc}.\n"
-        f"Language: {lang_instruction}\n"
-        f"Each question MUST have exactly 4 options. Return ONLY a JSON object in this exact format, no other text:\n"
-        f'{{"questions":[{{"q":"question text","options":["option A","option B","option C","option D"],"answer":0}}]}}\n'
-        f'The "answer" field MUST be an integer 0, 1, 2, or 3 indicating the index of the correct option. '
-        f"Make sure questions cover key concepts from the lesson."
+        f"Generate exactly {count} academic MCQs for Class {test_class} {subject} based on the attached content.\n"
+        f"Difficulty: {diff_info['tag']} ({diff_info['desc']}).\n"
+        f"Language: {language}.\n\n"
+        "STRICT RULES:\n"
+        "1. NO 'meta' questions (e.g., 'What is the title?', 'What is this lesson about?').\n"
+        "2. Focus on key terms, definitions, laws, and facts mentioned in the text.\n"
+        "3. Ensure all 4 options are plausible; only 1 must be correct.\n"
+        "4. Return ONLY a JSON object in this format:\n"
+        '{"questions":[{"q":"question text","options":["A","B","C","D"],"answer":0}]}'
     )
-    if lesson_text:
-        prompt += f"\n\nLesson Text:\n{lesson_text}"
-    elif image_b64:
-        prompt += "\n\nThe lesson is in the attached image. Read it carefully (including any printed text in English/Hindi) and base your questions on its content."
-
-    text = None
+text = None
 
     # ── Try Gemini first ─────────────────────────────────
     if api_key:
@@ -437,9 +425,12 @@ async def teacher_generate(body: GenerateIn):
         raise HTTPException(400, "Subject is required")
     count = max(3, min(20, int(body.count or 10)))
 
-    questions = await generate_questions_llm(
+        questions = await generate_questions_llm(
         body.lesson_text, body.image_base64, count,
-        language=body.language, difficulty=body.difficulty,
+        test_class=body.test_class,  # Added
+        subject=body.subject,        # Added
+        language=body.language, 
+        difficulty=body.difficulty,
     )
 
     await upsert_active_test(body.teacher_id, {
