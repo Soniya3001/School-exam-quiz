@@ -184,7 +184,7 @@ async def generate_questions_llm(
     )
 
     prompt = (
-        f"Generate exactly {count} multiple choice questions based on the lesson content.\n"
+        f"Generate exactly {count} multiple choice questions based on the lesson content These questions should be about study topics in lesson and should useful for students for exam purpose.\n"
         f"Difficulty level: {diff_desc}.\n"
         f"Language: {lang_instruction}\n"
         f"Each question MUST have exactly 4 options. Return ONLY a JSON object in this exact format, no other text:\n"
@@ -206,7 +206,7 @@ async def generate_questions_llm(
                 api_key=api_key,
                 session_id=f"gen-{uuid.uuid4()}",
                 system_message=system_msg,
-            ).with_model("gemini", "gemini-2.5-flash").with_params(max_tokens=4000)
+            ).with_model("gemini", "gemini-2.5-flash").with_params(max_tokens=8000)
 
             if image_b64:
                 cleaned_img = re.sub(r"^data:image/[^;]+;base64,", "", image_b64).strip()
@@ -228,7 +228,7 @@ async def generate_questions_llm(
             if image_b64:
                 groq_prompt = prompt.replace(
                     "\n\nThe lesson is in the attached image. Read it carefully (including any printed text in English/Hindi) and base your questions on its content.",
-                    f"\n\nNote: An image was provided but could not be processed. Please generate {count} general questions on the subject based on standard curriculum."
+                    f"\n\nNote: An image was provided but could not be processed. Please generate {count} general questions from the topic given in images."
                 )
             text = await call_groq(groq_prompt, system_msg)
             logger.info("Questions generated via Groq fallback")
