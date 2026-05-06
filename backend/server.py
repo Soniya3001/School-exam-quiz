@@ -192,7 +192,7 @@ async def generate_questions_llm(
                 api_key=api_key,
                 session_id=f"gen-{uuid.uuid4()}",
                 system_message=system_msg,
-            ).with_model("gemini", "gemini-1.5-flash").with_params(max_tokens=8000)
+            ).with_model("gemini", "gemini-2.5-flash").with_params(max_tokens=8000)
 
             if image_b64:
                 cleaned_img = re.sub(r"^data:image/[^;]+;base64,", "", image_b64).strip()
